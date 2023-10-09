@@ -8,7 +8,9 @@ const userSchema = new Schema({
         type: String,
         lowercase: true,
         require: true,
-        unique: false,
+        unique: true,
+        
+
     },
     hashk: {
         type: String,

@@ -73,10 +73,55 @@ async function registerUser(phone, callback) {
         if (!phone) {
             throw new Error("PHONE NUMBER REQUIRED");
         }
-        const createUser = new UserModel({ phone, hashk });
-        console.log("create user UserModel ");
-        console.log(createUser);
-        return await createUser.save();
+
+        const existuser = await UserModel.findOneAndUpdate(
+            { phone },
+            { $set: { ["hash"]: hashk, } },
+
+            { new: true }
+        );
+        console.log("updatedUsr");
+
+        console.log(existuser);
+        if (!existuser) {
+            const createUser = new UserModel({ phone, hashk });
+            console.log("create user UserModel ----");
+            console.log(createUser);
+            const ret = await createUser.save();
+            console.log(ret);
+        }
+
+
+        // return await createUser.save();
+        const result = {
+            "hash": hashk,
+            "otp": otp
+
+        };
+        return await result;
+
+    } catch (err) {
+        throw err;
+    }
+}
+
+
+async function FindUser(params, callback) {
+    try {
+        const { phone } = params;
+        if (!phone) {
+            throw new Error("PHONE NUMBER REQUIRED");
+        }
+        const existuser = await UserModel.findOne(
+            { phone },
+        );
+        console.log("updatedUsr");
+        console.log(existuser);
+        // return await createUser.save();
+        // const result = existuser;
+        if (existuser)
+        return await existuser;
+
     } catch (err) {
         throw err;
     }
@@ -169,14 +214,14 @@ async function createOtp(params, callback) {
 async function verifyOTP(params, callback) {
     let [hashValue, expires] = params.hash.split('.');
     let now = Date.now();
-    if (now > parseInt(expires)) return callback("OTP Expired");
+    if (now > parseInt(expires)) return callback(null, "OTP Expired");
     let data = `${params.phone}.${params.otp}.${expires}`;
     let newCalculatedHash = crypto.createHmac("sha256", key).update(data).digest("hex");
     if (newCalculatedHash === hashValue) {
         return callback(null, "Success")
     }
     else {
-        return callback("Invalid OTP")
+        return callback(null, "Invalid OTP")
     }
 }
 
@@ -185,6 +230,12 @@ async function addname(params, callback) {
         const { phone, name, city } = params;
         // Find the user document by phone number and update the specified key-value pair
         const updatedUser = await UserModel.findOneAndUpdate(
+            { phone },
+            { $set: { ["name"]: name, ["city"]: city } },
+            { new: true }
+        );
+
+        const updatedUsr = await UserModel.find(
             { phone },
             { $set: { ["name"]: name, ["city"]: city } },
             { new: true }
@@ -204,7 +255,7 @@ async function addname(params, callback) {
     }
 }
 
-module.exports = { registerUser, createOtp, verifyOTP, addname };
+module.exports = { registerUser, createOtp, FindUser, verifyOTP, addname };
 
 
 
