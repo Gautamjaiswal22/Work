@@ -83,7 +83,7 @@ async function registerUser(phone, callback) {
         console.log("updatedUsr");
 
         console.log(existuser);
-        if (!existuser) {
+        if (existuser == null) {
             const createUser = new UserModel({ phone, hashk });
             console.log("create user UserModel ----");
             console.log(createUser);
@@ -119,8 +119,12 @@ async function FindUser(params, callback) {
         console.log(existuser);
         // return await createUser.save();
         // const result = existuser;
-        if (existuser)
-        return await existuser;
+        if (existuser) {
+            return "olduser";
+        }
+        else {
+            return "newuser";
+        }
 
     } catch (err) {
         throw err;

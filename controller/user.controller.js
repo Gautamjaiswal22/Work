@@ -51,14 +51,40 @@ exports.addName = (req, res, next) => {
     })
 }
 
-exports.FindUser = (req, res, next) => {
-    UserService.FindUser(req.body, (error, results) => {
-        if (error) {
-            return next(error);
-        }
+exports.FindUser = async (req, res, next) => {
+    try {
+        console.log("in controller finduser try block");
+        // const successRes = await UserService.registerUser(phone);
+
+        const successRes = await UserService.FindUser(req.body);
+
+
         return res.status(200).send({
             status: true,
-            message: results,
+            message: "Success",
+            data: successRes,
         });
-    })
+    }
+
+
+    catch (error) {
+        throw error
+
+
+    }
+
+
+
+    // UserService.FindUser(req.body, (error, results) => {
+
+    //     if (error) {
+    //         return next(error);
+    //     }
+    //     return res.status(200).send({
+    //         status: true,
+    //         message: "Success",
+    //         data: results,
+
+    //     });
+    // })
 }

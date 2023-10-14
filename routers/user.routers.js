@@ -7,5 +7,5 @@ router.post('/verifyOTP', UserController.verifyOTP);
 router.put('/addname', UserController.addName);
 router.post('/findUser', UserController.FindUser);
 
-
+ 
 module.exports = router; 
